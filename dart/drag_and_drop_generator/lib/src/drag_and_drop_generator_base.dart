@@ -94,7 +94,7 @@ List<Code> generateNodeTypeCaching() {
     for (var type in types)
       Code('typesCache["$type"] = ${getType('NodeType')}.values'
           '   .firstWhere((e) => '
-          'e.toString() == "NodeType.$type"));'),
+          'e.toString() == "NodeType.$type");'),
   ];
 }
 
