@@ -13,9 +13,9 @@ jobs:
         uses: subosito/flutter-action@v1
         with:
           channel: "beta"
-      - name: Get packages in a Flutter project
-        run: flutter pub get
+      - name: Get packages in a Dart project
+        run: dart pub get
         working-directory: ./dart/drag_and_drop_generator
       - name: "Test flutter"
-        run: flutter test
+        run: dart test
         working-directory: ./dart/drag_and_drop_generator
