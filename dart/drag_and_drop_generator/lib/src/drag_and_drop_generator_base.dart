@@ -22,7 +22,7 @@ void generate() async {
 
 /// Write the code to the correct file.
 void writeFile(String code) {
-  var file = File('lib/provider/nodes.dart');
+  var file = File('lib/providers/nodes.dart');
   file.writeAsStringSync(code, flush: true);
 }
 
