@@ -12,6 +12,8 @@ final _dartfmt = DartFormatter();
 /// The parsed version of nodes.json
 dynamic nodes;
 
+final _allocator = Allocator.simplePrefixing();
+
 /// Generate the code and write it to the file.
 void generate() async {
   nodes = await getNodes(Client());
@@ -33,7 +35,7 @@ String generateCode() {
   final staticNodes = Class(generateStaticNodeBody);
   final library = Library((b) => b.body.addAll([uuidField, n, staticNodes]));
 
-  final emitter = DartEmitter(Allocator.simplePrefixing());
+  final emitter = DartEmitter(_allocator);
   final file =
       _dartfmt.format('${library.accept(emitter)}'.replaceAll('"', '\''));
   return file;
@@ -89,10 +91,11 @@ void generateDefaultInitializeMethod(MethodBuilder builder) {
 List<Code> generateNodeTypeCaching() {
   dynamic types = nodes['nodes'].values.map((v) => v['type']).toSet().toList();
   return [
-    Code('final typesCache = Map<String, NodeType>();'),
+    Code('final typesCache = Map<String, ${getType('NodeType')}>();'),
     for (var type in types)
-      Code('typesCache.put("$type", NodeType.values'
-          '   .firstWhere((e) => e.toString() == "NodeType.$type"));'),
+      Code('typesCache.put("$type", ${getType('NodeType')}.values'
+          '   .firstWhere((e) => '
+          'e.toString() == "${getType('NodeType')}.$type"));'),
   ];
 }
 
@@ -113,7 +116,7 @@ Code generateStaticNodeInitCode(String nodeId) {
 /// Generate the method to convert from a node id to a actual nodeable.
 void generateConvertMethod(MethodBuilder builder) {
   builder.name = 'convertToNodeable';
-  builder.returns = refer('Nodeable');
+  builder.returns = refer('Nodeable', 'gom.dart');
   builder.requiredParameters.add(Parameter((b) {
     b.name = 'id';
     b.type = refer('String');
@@ -145,12 +148,13 @@ Code generateIfNodeable(String nodeId) {
 
   return Block.of([
     Code('if(id == "$nodeId") {'),
-    Code('return Nodeable('),
+    Code('return ${getType('Nodeable')}('),
     Code('id: uuid.v4(),'),
     Code('name: "${node["name"]}",'),
     Code('nodeId: "$nodeId",'),
-    Code('type: NodeType.values'
-        '   .firstWhere((e) => e.toString() == "NodeType.${node["type"]}"),'),
+    Code('type: ${getType('NodeType')}.values'
+        '   .firstWhere((e) => '
+        'e.toString() == "${getType('NodeType')}.${node["type"]}"),'),
     Code('runOn: ${jsonEncode(node['run-on'])},'),
     Code('x: x,'),
     Code('y: y,'),
@@ -167,16 +171,17 @@ Code generateIfNodeable(String nodeId) {
 List<Code> generateSelectorCreation(String id, dynamic selector) {
   var type = selector['type'];
   var color = nodes['selector-types'][type]['color'];
-  var strategy = 'CacheStrategy.values'
+  var strategy = '${getType('CacheStrategy')}.values'
       '   .firstWhere((e) => e.toString() == '
-      '"CacheStrategy.${selector["strategy"]}")';
+      '"${getType('CacheStrategy')}.${selector["strategy"]}")';
 
   return [
-    Code('AdvancedSelector('),
+    Code('${getType('AdvancedSelector')}('),
     Code('id: uuid.v4(),'),
     Code('name: "${selector['name']}",'),
     Code('type: "$type",'),
-    Code('color: Color($color),'),
+    Code(
+        'color: ${getType('Color', 'package:flutter/material.dart')}($color),'),
     Code('connectorIn: ${selector['connectorIn'] ?? false},'),
     Code('connectorOut: ${selector['connectorOut'] ?? false},'),
     Code('strategy: $strategy,'),
@@ -202,7 +207,7 @@ void generateStaticNodeBody(ClassBuilder builder) {
     }),
     Field((b) {
       b.name = 'type';
-      b.type = refer('NodeType', 'package:gamelezz_panel/providers/gom.dart');
+      b.type = refer('NodeType', 'gom.dart');
       b.modifier = FieldModifier.final$;
     }),
   ]);
@@ -215,4 +220,9 @@ void generateStaticNodeBody(ClassBuilder builder) {
               p.required = false;
             })));
   }));
+}
+
+/// Get the correct import type.
+String getType(String name, [String package = 'gom.dart']) {
+  return _allocator.allocate(refer(name, package));
 }
