@@ -1,0 +1,16 @@
+include: package:effective_dart/analysis_options.yaml
+
+analyzer:
+  errors:
+    # treat missing required parameters as a warning (not a hint)
+    missing_required_param: warning
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+
+linter:
+  rules:
+    annotate_overrides: true
+    omit_local_variable_types: true
+    prefer_single_quotes: true
+    use_function_type_syntax: true
