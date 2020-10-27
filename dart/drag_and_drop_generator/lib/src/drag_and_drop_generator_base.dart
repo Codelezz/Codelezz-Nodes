@@ -62,12 +62,11 @@ void generateClassBody(ClassBuilder builder) {
 void generateStaticNodes(FieldBuilder builder) {
   builder.name = 'nodes';
   builder.type = refer('List<StaticNode>');
-  builder.modifier = FieldModifier.final$;
 }
 
 /// Generate the private constructor.
 void generateConstructor(ConstructorBuilder builder) {
-  builder.body = const Code('this.nodes = _generateStaticNodes();');
+  builder.body = const Code('nodes = _generateStaticNodes();');
 }
 
 /// Generate the code that will generate all the static nodes.
@@ -78,7 +77,7 @@ void generateDefaultInitializeMethod(MethodBuilder builder) {
   dynamic nn = nodes['nodes'];
 
   var block = Block.of([
-    refer('List<StaticNode>').newInstance([]).assignFinal('nodes').statement,
+    Code('final nodes = <StaticNode>[];'),
     ...generateNodeTypeCaching(),
     for (var nodeId in nn.keys) generateStaticNodeInitCode(nodeId),
     refer('nodes').returned.statement,
@@ -91,11 +90,11 @@ void generateDefaultInitializeMethod(MethodBuilder builder) {
 List<Code> generateNodeTypeCaching() {
   dynamic types = nodes['nodes'].values.map((v) => v['type']).toSet().toList();
   return [
-    Code('final typesCache = Map<String, ${getType('NodeType')}>();'),
+    Code('final typesCache = <String, ${getType('NodeType')}>{};'),
     for (var type in types)
-      Code('typesCache.put("$type", ${getType('NodeType')}.values'
+      Code('typesCache["$type"] = ${getType('NodeType')}.values'
           '   .firstWhere((e) => '
-          'e.toString() == "${getType('NodeType')}.$type"));'),
+          'e.toString() == "NodeType.$type"));'),
   ];
 }
 
@@ -154,7 +153,7 @@ Code generateIfNodeable(String nodeId) {
     Code('nodeId: "$nodeId",'),
     Code('type: ${getType('NodeType')}.values'
         '   .firstWhere((e) => '
-        'e.toString() == "${getType('NodeType')}.${node["type"]}"),'),
+        'e.toString() == "NodeType.${node["type"]}"),'),
     Code('runOn: ${jsonEncode(node['run-on'])},'),
     Code('x: x,'),
     Code('y: y,'),
@@ -173,7 +172,7 @@ List<Code> generateSelectorCreation(String id, dynamic selector) {
   var color = nodes['selector-types'][type]['color'];
   var strategy = '${getType('CacheStrategy')}.values'
       '   .firstWhere((e) => e.toString() == '
-      '"${getType('CacheStrategy')}.${selector["strategy"]}")';
+      '"CacheStrategy.${selector["strategy"]}")';
 
   return [
     Code('${getType('AdvancedSelector')}('),
