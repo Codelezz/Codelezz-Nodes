@@ -1,0 +1,48 @@
+{
+  "nodes": {
+    "event-on-join": {
+      "name": "On Join Event",
+      "type": "event",
+      "run-on": [
+        "minecraft"
+      ],
+      "selectors": {
+        "player": {
+          "name": "Player",
+          "type": "player",
+          "connectorOut": true,
+          "strategy": "disposeOnRun"
+        }
+      }
+    },
+    "player-send-message": {
+      "name": "Send Message",
+      "type": "action",
+      "run-on": [
+        "minecraft"
+      ],
+      "selectors": {
+        "player": {
+          "name": "Player",
+          "type": "player",
+          "connectorIn": true,
+          "strategy": "disposeOnRun"
+        },
+        "message": {
+          "name": "Message",
+          "type": "string",
+          "connectorIn": true,
+          "strategy": "keep"
+        }
+      }
+    }
+  },
+  "selector-types": {
+    "player": {
+      "color": 5410559
+    },
+    "string": {
+      "color": 3463482
+    }
+  }
+}
