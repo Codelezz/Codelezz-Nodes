@@ -1,0 +1,303 @@
+functions: [uniqueValues, selectorType]
+rules:
+  # ------------ Nodes ------------
+  node-id-kabab-case:
+    description: Node ids must be kebab-case.
+    message: "{{property}} is not kebab-case (lower case and separated with hyphens)"
+    severity: error
+    given: "$.nodes"
+    then:
+      field: "@key"
+      function: casing
+      functionOptions:
+        type: kebab
+  # --- name ---
+  node-name-exists:
+    description: Nodes must have a name field.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "name"
+      function: truthy
+  node-name-is-string:
+    description: Name must be a string.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "name"
+      function: schema
+      functionOptions:
+        schema:
+          type: string
+  node-name-capitial-case:
+    description: Node names must have every word starting with a capital letter.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "name"
+      function: pattern
+      functionOptions:
+        match: "^(\\b[A-Z]\\w*\\s*)+$"
+  node-name-start-end-with-no-space:
+    description: Node names can not start or end with a space.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "name"
+      function: pattern
+      functionOptions:
+        match: "^[^ ].*[^ ]$"
+  # --- type ---
+  node-type-exists:
+    description: Nodes must have a type field.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "type"
+      function: truthy
+  node-type-is-string:
+    description: Type must be a string.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "type"
+      function: schema
+      functionOptions:
+        schema:
+          type: string
+  node-type-kabab-case:
+    description: Node types must be kebab-case.
+    message: "{{property}} is not kebab-case (lower case and separated with hyphens)"
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "type"
+      function: casing
+      functionOptions:
+        type: kebab
+  node-types:
+    description: |
+      Node types must be one of the valid options.
+
+      event
+      action
+      variable
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "type"
+      function: enumeration
+      functionOptions:
+        values:
+          - event
+          - action
+          - variable
+
+  # --- on-run ---
+  node-run-on-existss:
+    description: Nodes must have a run-on field.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "run-on"
+      function: truthy
+  node-run-on-lower-case:
+    description: Node run-on's must be lowercase.
+    severity: error
+    given: "$.nodes[*].run-on[*]"
+    then:
+      field: "@key"
+      function: pattern
+      functionOptions:
+        match: "^[a-z\\-]+$"
+  node-run-on-type:
+    description: |
+      Node run-on's must be one of the valid types.
+
+      minecraft
+      web
+    severity: error
+    given: "$.nodes[*].run-on[*]"
+    then:
+      field: "@key"
+      function: enumeration
+      functionOptions:
+        values:
+          - minecraft
+          - web
+  node-run-on-array:
+    description: Node run-on's must be a array of strings and not empty.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "run-on"
+      function: schema
+      functionOptions:
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+  node-run-on-alphabetical:
+    description: Node run-on's should be ordered alphabeticaly.
+    severity: warn
+    given: "$.nodes[*]"
+    then:
+      field: "run-on"
+      function: alphabetical
+      functionOptions:
+        keyedBy: name
+  node-run-on-unique-valeus:
+    description: Run-on's must be distinct.
+    message: "Run-on's must be distinct: {{error}}."
+    severity: error
+    given: "$.nodes[*].run-on"
+    then:
+      function: "uniqueValues"
+
+  # ----------- Selectors -----------
+  node-selectors-exists:
+    description: Node must contian selectors.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "selectors"
+      function: truthy
+  node-selectors-schema:
+    description: Selector must be an object
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "selectors"
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+  # --- id ---
+  node-selectors-id-kabab-case:
+    description: Selectors id must be kebab-case.
+    message: "{{property}} is not kebab-case (lower case and separated with hyphens)"
+    severity: error
+    given: "$.nodes[*].selectors"
+    then:
+      field: "@key"
+      function: casing
+      functionOptions:
+        type: kebab
+  # --- name ---
+  node-selectors-name-exists:
+    description: Selector must contian a name.
+    severity: error
+    given: "$.nodes[*].selectors[*]"
+    then:
+      field: "name"
+      function: truthy
+  node-selectors-name-is-string:
+    description: Name must be a string.
+    severity: error
+    given: "$.nodes[*].selectors[*]"
+    then:
+      field: "name"
+      function: schema
+      functionOptions:
+        schema:
+          type: string
+  node-selectors-name-capitial-case:
+    description: Selector names must have every word starting with a capital letter.
+    severity: error
+    given: "$.nodes[*].selectors[*]"
+    then:
+      field: "name"
+      function: pattern
+      functionOptions:
+        match: "^(\\b[A-Z]\\w*\\s*)+$"
+  node-selectors-name-start-end-with-no-space:
+    description: Selector names can not start or end with a space.
+    severity: error
+    given: "$.nodes[*].selectors[*]"
+    then:
+      field: "name"
+      function: pattern
+      functionOptions:
+        match: "^[^ ].*[^ ]$"
+  # --- type ---
+  node-selectors-type-exists:
+    description: Selector must contian a type.
+    severity: error
+    given: "$.nodes[*].selectors[*]"
+    then:
+      field: "type"
+      function: truthy
+  node-selectors-type-is-string:
+    description: Type must be a string.
+    severity: error
+    given: "$.nodes[*].selectors[*]"
+    then:
+      field: "type"
+      function: schema
+      functionOptions:
+        schema:
+          type: string
+  node-selectors-type-defined:
+    description: Selector type must be defined in selector-types.
+    message: "{{error}}"
+    severity: error
+    given: ["$"]
+    then:
+      function: "selectorType"
+  # --- strategy ---
+  node-selectors-stategy-type:
+    description: |
+      Selectors strategy must be one of the valid types.
+
+      keep
+      disposeOnRun
+    severity: error
+    given: "$.nodes[*].selectors[*]"
+    then:
+      field: "strategy"
+      function: enumeration
+      functionOptions:
+        values:
+          - keep
+          - disposeOnRun
+  node-selectors-stategy-is-string:
+    description: Strategy must be a string.
+    severity: error
+    given: "$.nodes[*].selectors[*]"
+    then:
+      field: "strategy"
+      function: schema
+      functionOptions:
+        schema:
+          type: string
+
+  # ----------- Selector Types -----------
+  selelctor-types-id-kabab-case:
+    description: Selector types ids must be kebab-case.
+    message: "{{property}} is not kebab-case (lower case and separated with hyphens)"
+    severity: error
+    given: "$.selector-types"
+    then:
+      field: "@key"
+      function: casing
+      functionOptions:
+        type: kebab
+  # --- color ---
+  selelctor-types-color-exists:
+    description: Selector types must have a color field.
+    severity: error
+    given: "$.selector-types[*]"
+    then:
+      field: "color"
+      function: truthy
+  selelctor-types-color-is-number:
+    description: Color must be a number.
+    severity: error
+    given: "$.selector-types[*]"
+    then:
+      field: "color"
+      function: schema
+      functionOptions:
+        schema:
+          type: number
