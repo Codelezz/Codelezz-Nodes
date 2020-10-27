@@ -9,12 +9,12 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Change directory to drag and drop generator
-        run: cd dart/drag_and_drop_generator
       - name: Install Flutter
         uses: subosito/flutter-action@v1
         with:
           channel: "beta"
+      - name: Change directory to drag and drop generator
+        run: cd dart/drag_and_drop_generator
       - name: Get packages in a Flutter project
         run: flutter pub get
       - name: "Test flutter"
