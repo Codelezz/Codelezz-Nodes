@@ -1,0 +1,21 @@
+name: Run test on pull request
+
+on: [ pull_request ]
+
+jobs:
+  test-dad-gen:
+    name: Test the drag and drop generator
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Install Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: "beta"
+      - name: Get packages in a Dart project
+        run: dart pub get
+        working-directory: ./dart/drag_and_drop_generator
+      - name: "Test flutter"
+        run: dart test
+        working-directory: ./dart/drag_and_drop_generator
