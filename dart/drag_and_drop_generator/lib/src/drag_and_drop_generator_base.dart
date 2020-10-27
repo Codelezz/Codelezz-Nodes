@@ -12,7 +12,8 @@ final _dartfmt = DartFormatter();
 /// The parsed version of nodes.json
 dynamic nodes;
 
-void main() async {
+/// Generate the code and write it to the file.
+void generate() async {
   nodes = await getNodes(Client());
   var code = generateCode();
   writeFile(code);
