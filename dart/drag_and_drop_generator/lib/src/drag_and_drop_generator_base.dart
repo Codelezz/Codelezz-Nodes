@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
@@ -13,18 +14,28 @@ dynamic nodes;
 
 void main() async {
   nodes = await getNodes(Client());
-  startGeneration();
+  var code = generateCode();
+  writeFile(code);
+  // print(code);
+}
+
+/// Write the code to the correct file.
+void writeFile(String code) {
+  var file = File('lib/provider/nodes.dart');
+  file.writeAsStringSync(code, flush: true);
 }
 
 /// Start the generation of the class.
-void startGeneration() {
+String generateCode() {
   final uuidField = Field(generateUUIDField);
   final n = Class(generateClassBody);
   final staticNodes = Class(generateStaticNodeBody);
   final library = Library((b) => b.body.addAll([uuidField, n, staticNodes]));
+
+  final emitter = DartEmitter(Allocator.simplePrefixing());
   final file =
-      _dartfmt.format('${library.accept(DartEmitter())}'.replaceAll('"', '\''));
-  print(file);
+      _dartfmt.format('${library.accept(emitter)}'.replaceAll('"', '\''));
+  return file;
 }
 
 /// Generate uuid static field.
@@ -190,7 +201,7 @@ void generateStaticNodeBody(ClassBuilder builder) {
     }),
     Field((b) {
       b.name = 'type';
-      b.type = refer('NodeType', 'providers/gom.dart');
+      b.type = refer('NodeType', 'package:gamelezz_panel/providers/gom.dart');
       b.modifier = FieldModifier.final$;
     }),
   ]);
