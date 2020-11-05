@@ -35,6 +35,16 @@
           "strategy": "keep"
         }
       }
+    },
+    "variable": {
+      "name": "Variable",
+      "type": "variable",
+      "run-on": [
+        "web",
+        "minecraft"
+      ],
+      "selectors": {
+      }
     }
   },
   "selector-types": {
