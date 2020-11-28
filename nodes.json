@@ -1,7 +1,8 @@
 {
   "nodes": {
     "event-on-join": {
-      "name": "On Join Event",
+      "name": "Player Join Event",
+      "description": "Run when a player joins the server.",
       "type": "event",
       "run-on": [
         "minecraft"
@@ -17,6 +18,7 @@
     },
     "player-send-message": {
       "name": "Send Message",
+      "description": "Send the player a message.",
       "type": "action",
       "run-on": [
         "minecraft"
@@ -38,21 +40,57 @@
     },
     "variable": {
       "name": "Variable",
+      "description": "Store variables in memory. These will be reset on server startup.",
       "type": "variable",
       "run-on": [
         "web",
         "minecraft"
       ],
-      "selectors": {
-      }
+      "selectors": {}
     }
   },
   "selector-types": {
+    "blank": {
+      "color": 4286743170,
+      "annotations": {
+        "default-value": {
+          "hint": "Choose your type",
+          "type": "blank"
+        },
+        "default-name": {
+          "name": "Blank"
+        }
+      }
+    },
     "player": {
-      "color": 4283600639
+      "implements": [
+        "blank"
+      ],
+      "color": 4283600639,
+      "annotations": {
+        "default-value": {
+          "hint": "Player name or UUID",
+          "type": "text-input"
+        },
+        "default-name": {
+          "name": "Player"
+        }
+      }
     },
     "string": {
-      "color": 4283215696
+      "implements": [
+        "blank"
+      ],
+      "color": 4283215696,
+      "annotations": {
+        "default-value": {
+          "hint": "Type your text",
+          "type": "text-input"
+        },
+        "default-name": {
+          "name": "Text"
+        }
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-functions: [uniqueValues, selectorType]
+functions: [traceImplements, uniqueValues, selectorType]
 rules:
   # ------------ Nodes ------------
   node-id-kabab-case:
@@ -44,6 +44,33 @@ rules:
     given: "$.nodes[*]"
     then:
       field: "name"
+      function: pattern
+      functionOptions:
+        match: "^[^ ].*[^ ]$"
+  # --- description ---
+  node-description-exists:
+    description: Nodes must have a description field.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "description"
+      function: truthy
+  node-description-is-string:
+    description: Description must be a string.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "description"
+      function: schema
+      functionOptions:
+        schema:
+          type: string
+  node-description-start-end-with-no-space:
+    description: Node description can not start or end with a space.
+    severity: error
+    given: "$.nodes[*]"
+    then:
+      field: "description"
       function: pattern
       functionOptions:
         match: "^[^ ].*[^ ]$"
@@ -301,3 +328,10 @@ rules:
       functionOptions:
         schema:
           type: number
+  selelctor-types-implement-exists:
+    description: Selector types must always trace back to blank.
+    message: "{{error}}"
+    severity: error
+    given: ["$"]
+    then:
+      function: "traceImplements"
